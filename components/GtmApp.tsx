@@ -61,7 +61,7 @@ function Score({ value, size = "normal" }: { value: number; size?: "small" | "no
   return <span className={`score score-${size} ${tone}`}>{value}</span>;
 }
 
-function Landing({ input, setInput, onDemo, onGenerate, onProjects, hasProjects, generationError }: { input: GTMInput; setInput: React.Dispatch<React.SetStateAction<GTMInput>>; onDemo: () => void; onGenerate: (input: GTMInput) => void; onProjects: () => void; hasProjects: boolean; generationError: string }) {
+function Landing({ input, setInput, onDemo, onGenerate, onProjects, generationError }: { input: GTMInput; setInput: React.Dispatch<React.SetStateAction<GTMInput>>; onDemo: () => void; onGenerate: (input: GTMInput) => void; onProjects: () => void; generationError: string }) {
   const [errors, setErrors] = useState<Partial<Record<keyof GTMInput, string>>>({});
   const fieldRefs = useRef<Partial<Record<keyof GTMInput, HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null>>>({});
   const update = (field: keyof GTMInput, value: string) => { setInput((current) => ({ ...current, [field]: value })); setErrors((current) => ({ ...current, [field]: undefined })); };
@@ -84,7 +84,7 @@ function Landing({ input, setInput, onDemo, onGenerate, onProjects, hasProjects,
         <a className="brand" href="#top" aria-label="GTM Lab home"><span className="brand-mark">G</span><span>GTM Lab</span></a>
         <nav aria-label="Primary navigation">
             <a href="#methodology">About</a><a href="#demo">Demo Workspace</a>
-          {hasProjects && <button className="text-button" onClick={onProjects}>My Projects</button>}
+          <button className="text-button" onClick={onProjects}>My Projects</button>
           <span className="status-chip"><span />Interactive Prototype</span>
         </nav>
       </header>
@@ -278,7 +278,7 @@ export default function GtmApp() {
 
   if (screen === "generating") return <Generating step={generationStep} />;
   if (screen === "projects") return <Projects projects={projects} onOpen={openPlan} onDelete={deleteProject} onNew={() => setScreen("landing")} onHome={() => setScreen("landing")} />;
-  if (screen === "landing") return <Landing input={draft} setInput={setDraft} generationError={generationError} onDemo={() => openPlan(sentinelPlan)} onGenerate={generate} onProjects={() => setScreen("projects")} hasProjects={projects.length > 0} />;
+  if (screen === "landing") return <Landing input={draft} setInput={setDraft} generationError={generationError} onDemo={() => openPlan(sentinelPlan)} onGenerate={generate} onProjects={() => setScreen("projects")} />;
 
   return <div className="app-shell">
     <aside className={`main-sidebar ${mobileNav ? "open" : ""}`} aria-label="Workspace navigation"><div className="sidebar-top"><Logo /><button className="mobile-close" onClick={() => setMobileNav(false)} aria-label="Close navigation">×</button></div><button className="project-switcher" onClick={() => setScreen("projects")}><i>{plan.input.company.charAt(0)}</i><div><small>{plan.isDemo ? "Demo project" : "Current project"}</small><strong>{plan.input.company}</strong></div><span>⌄</span></button><button className="new-project-button" onClick={() => setScreen("landing")}>+ New GTM project</button><nav aria-label="GTM workspace sections">{views.map((item, index) => <button className={view === item ? "active" : ""} aria-current={view === item ? "page" : undefined} onClick={() => { setView(item); setMobileNav(false); }} key={item}><i>{String(index + 1).padStart(2, "0")}</i><span>{item}</span>{item === "Insights" && <b>4</b>}</button>)}</nav><div className="sidebar-method"><small>THE GTM SYSTEM</small><p>Market → ICP → Accounts → Pipeline → Revenue</p><button onClick={() => setScreen("landing")}>About the methodology</button></div></aside>

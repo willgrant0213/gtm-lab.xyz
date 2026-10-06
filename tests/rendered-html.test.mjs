@@ -45,7 +45,9 @@ test("server-renders the recruiter-facing GTM Lab experience", async () => {
   assert.match(html, /Explore Sentinel AI/);
   assert.match(html, /Illustrative model/);
   assert.match(html, /One connected commercial story/);
-  assert.match(html, /No external company research is performed/);
+  assert.match(html, /Form-generated projects do not perform external company research/);
+  assert.match(html, /Out2Win GTM plan/);
+  assert.match(html, /href="\/out2win"/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/);
 });
 
@@ -75,6 +77,46 @@ test("keeps generation, scoring, AI, and UI logic separated", async () => {
   assert.match(layout, /\/favicon\.svg/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await Promise.all([access(new URL("../public/og.png", import.meta.url)), access(new URL("../public/favicon.svg", import.meta.url)), access(new URL("../.env.example", import.meta.url))]);
+});
+
+test("server-renders the direct Out2Win interview link without fabricated operating metrics", async () => {
+  const response = await render("/out2win");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Out2Win — Researched GTM Plan/);
+  assert.match(html, /A focused plan for the next brand brief/);
+  assert.match(html, /Public evidence \+ proposed strategy/);
+  assert.match(html, /Actual pipeline \/ revenue/);
+  assert.match(html, /Unknown/);
+  assert.match(html, /Liquid I\.V\./);
+  assert.match(html, /out2win.io\/careers\/gtm-associate/);
+  assert.doesNotMatch(html, /Simulated scenario|Estimated TAM|Weighted pipeline|Sentinel demo/);
+});
+
+test("research priority is transparent and never fabricates prospect intent", async (t) => {
+  const vite = await createServer({ configFile: false, root: fileURLToPath(new URL("..", import.meta.url)), server: { middlewareMode: true }, appType: "custom", logLevel: "silent" });
+  t.after(() => vite.close());
+  const research = await vite.ssrLoadModule("/lib/research.ts");
+  const data = await vite.ssrLoadModule("/lib/out2win.ts");
+  assert.equal(data.out2winAccounts.length, 8);
+  assert.equal(new Set(data.out2winAccounts.map((a) => a.id)).size, 8);
+  assert.equal(research.RESEARCH_WEIGHTS.reduce((a, b) => a + b, 0), 100);
+  for (const account of data.out2winAccounts) {
+    const expected = Math.round(account.factors.reduce((sum, factor, i) => sum + factor.value / 5 * research.RESEARCH_WEIGHTS[i], 0));
+    assert.equal(research.researchPriority(account.factors), expected);
+    assert.ok(data.researchSource(account.sourceId).url.startsWith("https://"));
+    assert.ok(account.factors.every((factor) => factor.reason.length > 20));
+    for (const unavailable of ["intentScore", "dealValue", "probability", "stage", "revenue", "employees"]) assert.equal(account[unavailable], undefined);
+    assert.doesNotMatch(account.company, /Amazon|Nike|OLIPOP|Accelerator/i);
+    assert.match(data.researchOutreach(account).email, new RegExp(account.company.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  }
+  const rankedScores = data.out2winAccounts.map((a) => research.researchPriority(a.factors));
+  assert.deepEqual(rankedScores, [...rankedScores].sort((a, b) => b - a));
+  assert.throws(() => research.researchPriority([]), /four factors/);
+  assert.throws(() => research.researchPriority(Array(4).fill({ value: 6 })), /between 0 and 5/);
+  assert.throws(() => research.researchPriority(Array(4).fill({ value: NaN })), /between 0 and 5/);
+  assert.throws(() => data.researchSource("missing"), /Missing research source/);
+  for (const key of ["accounts", "campaigns", "segments"]) assert.deepEqual(data.out2winPlan[key], []);
 });
 
 test("custom generation adapts across industrial, SaaS, local-service, and consumer projects", async () => {

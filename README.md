@@ -5,6 +5,7 @@ GTM Lab is a recruiter-facing, interactive go-to-market strategy and revenue pla
 ## V1 behavior
 
 - A complete Sentinel AI demo is available immediately.
+- A curated Out2Win research workspace is available at `/out2win`, from the homepage and My Projects. It uses first-party sources reviewed October 6, 2026, not the mock generator.
 - The strategy form creates industry-aware workspaces from one connected strategy object.
 - When configured, qualitative strategy is generated through a server-side OpenAI Responses API call with strict structured output.
 - Without an API key—or if an AI request fails—the validated deterministic illustrative generator keeps the complete experience working.
@@ -29,6 +30,12 @@ The API call runs only in `POST /api/generate`. It requests structured qualitati
 - Strategy, ICP, personas, messaging, and recommendations are generated hypotheses.
 - Accounts, intent, campaign performance, pipeline, and revenue are illustrative simulation data.
 
+### Out2Win researched case study
+
+`lib/out2win.ts` holds the curated source register, eight real brand candidates, public evidence, proposed strategy and unsent outreach drafts. `lib/research.ts` implements a separate transparent research-priority model. `components/ResearchedWorkspace.tsx` renders the nine researched sections without using simulated operating metrics. The normal generator and Sentinel demo are unchanged.
+
+Brand announcements establish relevance, not buying intent. Candidate relationships and CRM ownership must be checked before outreach. Published campaign results are attributed to Out2Win and are not independently audited. ICP, buyer roles, scores and recommendations are editorial hypotheses. Private pipeline, revenue, budgets, contact details and probabilities remain unknown. This is a dated research snapshot, not a live company-research feature.
+
 ## Local development
 
 Use the project’s existing scripts:
@@ -38,4 +45,4 @@ Use the project’s existing scripts:
 - `npm test`
 - `npm run lint`
 
-This project has not been published. Hosting is intentionally deferred until explicit approval.
+Publishing local changes requires explicit approval. No development or verification script deploys the site.

@@ -61,24 +61,27 @@ function ScoreBreakdown({ account }: { account: ResearchAccount }) {
 function Overview({ setView, openAccount }: { setView: (view: ResearchView) => void; openAccount: (account: ResearchAccount) => void }) {
   return <>
     <Title title="A focused plan for the next brand brief." description="Public company facts → relevant brands → buyer hypotheses → qualified campaign opportunities. An independent GTM proposal, not Out2Win’s internal operating plan." />
-    <div className="metric-grid research-metrics">
-      <div className="metric-card featured"><span>Proposed first segment</span><strong>Beverages</strong><small>Relevant product fit + published campaign proof</small></div>
+    <div className="dashboard-grid overview-lead">
+      <Card label="SOURCED COMPANY CONTEXT" title="What Out2Win sells">
+        <p>Out2Win presents an athlete-influencer campaign offering for consumer brands, combining athlete intelligence with campaign execution and measurement.</p><SourceLinks ids={["company", "workflow"]} />
+        <dl className="overview-facts"><div><dt>Target customer</dt><dd>Consumer brands running athlete / creator campaigns</dd></div><div><dt>Proposed starting market</dt><dd>U.S. beverage & hydration brands</dd></div></dl>
+        <details className="inline-details"><summary>Why focus on brand acquisition?</summary><p>The GTM Associate role emphasizes finding relevant brands, getting meetings, qualifying opportunities, using AI workflows and feeding market feedback into the business. It also describes an upmarket direction toward larger brands and agency partnerships.</p><SourceLinks ids={["role"]} />
+        <p className="research-note">Scope choice: start with the brand campaign buyer. Out2Win’s separate talent-agency offering is not treated as the same sales motion.</p></details>
+      </Card>
+      <Card label="PROPOSED COMMERCIAL THESIS" title="Fit before volume.">
+        <p>Start where a consumer product, athlete audience and measurable campaign objective overlap. A sponsorship announcement earns a research slot—not a qualified opportunity.</p>
+        <ol className="recommendations">{out2winPlan.recommendations.slice(0, 3).map((item, i) => <li key={item}><b>0{i + 1}</b><span>{item}</span></li>)}</ol>
+        <details className="inline-details"><summary>One more recommendation</summary><ol className="recommendations" start={4}>{out2winPlan.recommendations.slice(3).map((item, i) => <li key={item}><b>0{i + 4}</b><span>{item}</span></li>)}</ol></details>
+      </Card>
+    </div>
+    <div className="overview-section-heading"><div><span>RESEARCH SNAPSHOT</span><h2>What this plan is built on</h2></div><button className="link-button" onClick={() => setView("Campaigns")}>Explore published proof →</button></div>
+    <div className="metric-grid research-metrics overview-metrics">
+      <div className="metric-card"><span>Proposed first segment</span><strong>Beverages</strong><small>Relevant product fit + published campaign proof</small></div>
       <div className="metric-card"><span>Curated brand candidates</span><strong>{out2winAccounts.length}</strong><small>Real brands · relationships not confirmed</small></div>
       <div className="metric-card"><span>Published campaign examples</span><strong>{out2winProof.length}</strong><small>Company-reported, not independently audited</small></div>
       <div className="metric-card"><span>Actual pipeline / revenue</span><strong>Unknown</strong><small>No CRM access or private financial data</small></div>
     </div>
-    <section className="recruiter-tour"><div><span>INTERVIEW QUICK TOUR</span><strong>Show the reasoning, then the next action.</strong></div>{(["Market", "Priority Accounts", "Campaigns", "Insights"] as const).map((view, i) => <button key={view} onClick={() => setView(view)}><b>0{i + 1}</b><span>{view === "Campaigns" ? "Published proof" : view}</span></button>)}</section>
-    <div className="dashboard-grid wide-left">
-      <Card label="SOURCED COMPANY CONTEXT" title="What Out2Win sells">
-        <p>Out2Win presents an athlete-influencer campaign offering for consumer brands, combining athlete intelligence with campaign execution and measurement.</p><SourceLinks ids={["company", "workflow"]} />
-        <h3>Why this plan focuses on brand acquisition</h3><p>The GTM Associate role emphasizes finding relevant brands, getting meetings, qualifying opportunities, using AI workflows and feeding market feedback into the business. It also describes an upmarket direction toward larger brands and agency partnerships.</p><SourceLinks ids={["role"]} />
-        <p className="research-note">Scope choice: start with the brand campaign buyer. Out2Win’s separate talent-agency offering is not treated as the same sales motion.</p>
-      </Card>
-      <Card label="PROPOSED COMMERCIAL THESIS" title="Fit before volume." dark>
-        <p>Start where a consumer product, athlete audience and measurable campaign objective overlap. A sponsorship announcement earns a research slot—not a qualified opportunity.</p>
-        <ol className="recommendations">{out2winPlan.recommendations.map((item, i) => <li key={item}><b>0{i + 1}</b><span>{item}</span></li>)}</ol>
-      </Card>
-    </div>
+    <details className="overview-details"><summary><span>First prospecting block</span><small>Three brands to research & a discovery checklist</small></summary>
     <div className="dashboard-grid">
       <Card label="FIRST PROSPECTING BLOCK" title="Research these brands first">
         {out2winAccounts.slice(0, 3).map((account, i) => <button className="research-account-short" onClick={() => openAccount(account)} key={account.id}><span>0{i + 1}</span><div><strong>{account.company}</strong><small>{account.buyer} · proposed role</small></div><Score account={account} /><span aria-hidden="true">→</span></button>)}
@@ -89,6 +92,8 @@ function Overview({ setView, openAccount }: { setView: (view: ResearchView) => v
         <button className="link-button" onClick={() => setView("Pipeline")}>See qualification gates →</button>
       </Card>
     </div>
+    </details>
+    <details className="overview-details"><summary><span>Quick tour</span><small>Four stops through the researched plan</small></summary><section className="recruiter-tour"><div><span>INTERVIEW QUICK TOUR</span><strong>Show the reasoning, then the next action.</strong></div>{(["Market", "Priority Accounts", "Campaigns", "Insights"] as const).map((view, i) => <button key={view} onClick={() => setView(view)}><b>0{i + 1}</b><span>{view === "Campaigns" ? "Published proof" : view}</span></button>)}</section></details>
   </>;
 }
 
@@ -111,15 +116,24 @@ function ICP() {
   </>;
 }
 
-function Accounts({ priority, openAccount }: { priority: boolean; openAccount: (account: ResearchAccount) => void }) {
+function Accounts({ priority, openAccount, onViewAccounts }: { priority: boolean; openAccount: (account: ResearchAccount) => void; onViewAccounts: () => void }) {
   const [search, setSearch] = useState(""); const [segment, setSegment] = useState(""); const [sort, setSort] = useState("priority");
   const filtered = out2winAccounts.filter((account) => (!segment || account.segment === segment) && `${account.company} ${account.buyer}`.toLowerCase().includes(search.toLowerCase()));
   const sorted = sort === "name" ? [...filtered].sort((a, b) => a.company.localeCompare(b.company)) : filtered;
-  return <><Title title={priority ? "Your next 90 minutes, with a reason." : "Real brands. Explicit hypotheses."} description={priority ? "Proposed prospecting allocation: 15 minutes checking ownership, 30 researching the top two brands, 30 drafting outreach, 15 logging findings. No inferred intent is used." : "Eight researched candidates, not confirmed prospects or new customers. Existing Out2Win relationships, budgets and contact details must be checked internally."} />
-    {priority && <ScoreModel />}
+  if (priority) return <><Title title="Three brands to investigate first." description="A focused shortlist from the eight researched candidates. Published evidence supports the ranking; fit, buyer roles and next steps remain hypotheses—not confirmed buying intent." />
+    <div className="priority-list-heading"><span>Top 3 of {out2winAccounts.length} researched brands</span><button className="link-button" onClick={onViewAccounts}>View all accounts →</button></div>
+    <div className="priority-stack research-priority-stack">{out2winAccounts.slice(0, 3).map((account, index) => <article className="priority-account" key={account.id}>
+      <div className="priority-rank"><span>Priority</span><b>{String(index + 1).padStart(2, "0")}</b></div>
+      <div className="priority-main"><div className="priority-company"><div><span>{account.segment}</span><h2>{account.company}</h2></div><Score account={account} /></div>
+        <div className="priority-evidence"><small>PUBLISHED EVIDENCE</small><p>{account.fact}</p><SourceLinks ids={[account.sourceId]} /></div>
+        <div className="research-priority-grid"><div><small>WHY INVESTIGATE · HYPOTHESIS</small><p>{account.hypothesis}</p></div><div><small>PROPOSED BUYER</small><p>{account.buyer}</p><small>No named contact confirmed</small></div></div>
+        <div className="priority-actions"><div><small>NEXT ACTION</small><p>{account.nextAction}</p></div><div><small>CHECK BEFORE OUTREACH</small><p>{account.constraint}</p></div><button onClick={() => openAccount(account)}>Open researched brief →</button></div>
+      </div></article>)}</div>
+    <details className="inline-details priority-method"><summary>How research priority is assessed</summary><ScoreModel /></details>
+  </>;
+  return <><Title title="Real brands. Explicit hypotheses." description="Eight researched candidates, not confirmed prospects or new customers. Existing Out2Win relationships, budgets and contact details must be checked internally." />
     <div className="filter-bar research-filters"><label className="search-field"><input aria-label="Search researched brands" placeholder="Search brand or buyer role" value={search} onChange={(e) => setSearch(e.target.value)} /></label><select aria-label="Filter researched segment" value={segment} onChange={(e) => setSegment(e.target.value)}><option value="">All segments</option>{out2winSegments.map((item) => <option key={item.name}>{item.name}</option>)}</select><select aria-label="Sort researched brands" value={sort} onChange={(e) => setSort(e.target.value)}><option value="priority">Research priority: high to low</option><option value="name">Brand: A–Z</option></select><span>{sorted.length} of {out2winAccounts.length} brands</span></div>
-    <section className="workspace-card research-table-wrap"><table className="research-table"><caption>{priority ? "Ranked research shortlist" : "Researched brand candidates"} · intent, deal value and current stage unknown</caption><thead><tr><th scope="col">Rank / brand</th><th scope="col">Published evidence</th><th scope="col">Proposed buyer</th><th scope="col">Priority</th><th scope="col">Action</th></tr></thead><tbody>{sorted.map((account) => <tr key={account.id}><td><strong><span className="research-rank">{String(out2winAccounts.indexOf(account) + 1).padStart(2, "0")}</span>{account.company}</strong><small>{account.segment}</small></td><td><p>{account.fact}</p><SourceLinks ids={[account.sourceId]} /></td><td>{account.buyer}<small>Role hypothesis · no named contact</small></td><td><Score account={account} /><small>Research only</small></td><td><button className="primary-small" onClick={() => openAccount(account)}>Open brief →</button></td></tr>)}</tbody></table>{!sorted.length && <div className="research-empty"><h3>No matching brands</h3><p>Try another name, role or segment.</p><button className="link-button" onClick={() => { setSearch(""); setSegment(""); }}>Clear filters</button></div>}</section>
-    {priority && <Card label="HOW TO USE THE RANKING" title="A reason to investigate—not a reason to forecast"><p>Liquid I.V. leads on category relevance and published activation scope. LMNT offers a narrower proposed test. Both still need a live brief, owner, budget and buying timeline. A higher score does not mean either brand is currently evaluating Out2Win.</p></Card>}
+    <section className="workspace-card research-table-wrap"><table className="research-table"><caption>Researched brand candidates · intent, deal value and current stage unknown</caption><thead><tr><th scope="col">Rank / brand</th><th scope="col">Published evidence</th><th scope="col">Proposed buyer</th><th scope="col">Priority</th><th scope="col">Action</th></tr></thead><tbody>{sorted.map((account) => <tr key={account.id}><td><strong><span className="research-rank">{String(out2winAccounts.indexOf(account) + 1).padStart(2, "0")}</span>{account.company}</strong><small>{account.segment}</small></td><td><p>{account.fact}</p><SourceLinks ids={[account.sourceId]} /></td><td>{account.buyer}<small>Role hypothesis · no named contact</small></td><td><Score account={account} /><small>Research only</small></td><td><button className="primary-small" onClick={() => openAccount(account)}>Open brief →</button></td></tr>)}</tbody></table>{!sorted.length && <div className="research-empty"><h3>No matching brands</h3><p>Try another name, role or segment.</p><button className="link-button" onClick={() => { setSearch(""); setSegment(""); }}>Clear filters</button></div>}</section>
   </>;
 }
 
@@ -194,7 +208,7 @@ export default function ResearchedWorkspace({ view, setView, openSources }: { vi
     {view === "Overview" && <Overview setView={setView} openAccount={setSelected} />}
     {view === "Market" && <Market />}
     {view === "ICP" && <ICP />}
-    {(view === "Accounts" || view === "Priority Accounts") && <Accounts key={view} priority={view === "Priority Accounts"} openAccount={setSelected} />}
+    {(view === "Accounts" || view === "Priority Accounts") && <Accounts key={view} priority={view === "Priority Accounts"} openAccount={setSelected} onViewAccounts={() => setView("Accounts")} />}
     {view === "Pipeline" && <Pipeline />}
     {view === "Campaigns" && <Campaigns />}
     {view === "Messaging" && <Messaging />}

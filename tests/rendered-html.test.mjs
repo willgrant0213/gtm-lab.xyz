@@ -41,12 +41,16 @@ test("server-renders the recruiter-facing GTM Lab experience", async () => {
   const html = await response.text();
   assert.match(html, /<title>GTM Lab/);
   assert.match(html, /Turn a market thesis into a revenue plan/);
-  assert.match(html, /Build a GTM strategy/);
-  assert.match(html, /Explore Sentinel AI/);
-  assert.match(html, /Illustrative model/);
+  assert.match(html, /Build your GTM strategy/);
+  assert.match(html, /Try example inputs/);
+  assert.match(html, /Creates an illustrative plan/);
+  assert.match(html, /This form doesn’t research the website/);
+  assert.match(html, /Four companies. Four commercial stories/);
+  assert.doesNotMatch(html, /Sentinel AI|ForecastFlow/);
+  for (const route of ["nike", "decagon", "anduril"]) assert.ok(html.includes(`href="/${route}"`));
   assert.match(html, /One connected commercial story/);
   assert.match(html, /Form-generated projects do not perform external company research/);
-  assert.match(html, /Out2Win GTM plan/);
+  assert.match(html, /Decagon GTM plan/);
   assert.match(html, /href="\/out2win"/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/);
 });
@@ -182,4 +186,43 @@ test("generation API reports specific validation errors", async () => {
   const response = await (await worker()).fetch(new Request("http://localhost/api/generate", { method: "POST", headers: { "content-type": "application/json", "cf-connecting-ip": "invalid-test" }, body: JSON.stringify({ ...inputs.saas, product: "" }) }), env, ctx);
   assert.equal(response.status, 400);
   assert.match((await response.json()).error, /product or service/i);
+});
+
+
+test("real company demos render sourced context without simulated operating results", async () => {
+  for (const [slug, name] of [["nike", "Nike"], ["decagon", "Decagon"], ["anduril", "Anduril"]]) {
+    const response = await render(`/${slug}`);
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    assert.ok(html.includes(`${name} — Researched GTM Plan`));
+    assert.match(html, /Public evidence \+ proposed strategy/);
+    assert.match(html, /Private pipeline \/ revenue/);
+    assert.match(html, /Unknown/);
+    assert.match(html, /Editorial focus/);
+    assert.doesNotMatch(html, /Sentinel AI|ForecastFlow|Estimated TAM|Weighted pipeline|Est. value/);
+  }
+});
+
+test("curated cases resolve source references, cap accounts and hide test fixtures without deleting data", async (t) => {
+  const vite = await createServer({ server: { middlewareMode: true }, configFile: false, appType: "custom" });
+  t.after(() => vite.close());
+  const { companyDemos, demoPlan, visibleSavedProjects } = await vite.ssrLoadModule("/lib/company-demos.ts");
+  assert.deepEqual(companyDemos.map((d) => d.id), ["nike", "decagon", "anduril"]);
+  for (const demo of companyDemos) {
+    assert.ok(demo.accounts.length >= 2 && demo.accounts.length <= 5);
+    assert.equal(new Set(demo.accounts.map((a) => a.id)).size, demo.accounts.length);
+    assert.equal(new Set(demo.sources.map((s) => s.id)).size, demo.sources.length);
+    const sources = new Map(demo.sources.map((s) => [s.id, s]));
+    for (const id of demo.companySources) assert.ok(sources.has(id));
+    for (const a of demo.accounts) {
+      assert.ok(sources.has(a.sourceId));
+      assert.ok(a.relationship && a.fact && a.why && a.constraint && a.action);
+      for (const field of ["intentScore", "dealValue", "probability", "stage", "revenue", "opportunityScore"]) assert.equal(a[field], undefined);
+    }
+    for (const source of demo.sources) assert.equal(new URL(source.url).protocol, "https:");
+    for (const field of ["accounts", "campaigns", "segments"]) assert.deepEqual(demoPlan(demo)[field], []);
+  }
+  const projects = ["ForecastFlow", "Forecast Flow", "Sentinel AI", "My real project"].map((company) => ({ input: { company } }));
+  assert.deepEqual(visibleSavedProjects(projects).map((p) => p.input.company), ["My real project"]);
+  assert.equal(projects.length, 4);
 });

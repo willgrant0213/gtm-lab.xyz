@@ -4,7 +4,7 @@ GTM Lab is a recruiter-facing, interactive go-to-market strategy and revenue pla
 
 ## V1 behavior
 
-- A complete Sentinel AI demo is available immediately.
+- Four public researched demos are available: Out2Win, Nike, Decagon and Anduril. Sentinel and ForecastFlow are retained as internal test fixtures and excluded from public demo choices.
 - A curated Out2Win research workspace is available at `/out2win`, from the homepage and My Projects. It uses first-party sources reviewed October 6, 2026, not the mock generator.
 - The strategy form creates industry-aware workspaces from one connected strategy object.
 - When configured, qualitative strategy is generated through a server-side OpenAI Responses API call with strict structured output.
@@ -32,9 +32,15 @@ The API call runs only in `POST /api/generate`. It requests structured qualitati
 
 ### Out2Win researched case study
 
-`lib/out2win.ts` holds the curated source register, eight real brand candidates, public evidence, proposed strategy and unsent outreach drafts. `lib/research.ts` implements a separate transparent research-priority model. `components/ResearchedWorkspace.tsx` renders the nine researched sections without using simulated operating metrics. The normal generator and Sentinel demo are unchanged.
+`lib/out2win.ts` holds the curated source register, eight real brand candidates, public evidence, proposed strategy and unsent outreach drafts. `lib/research.ts` implements a separate transparent research-priority model. `components/ResearchedWorkspace.tsx` renders the nine researched sections without using simulated operating metrics. The normal generator remains available. Sentinel stays as an internal test fixture.
 
 Brand announcements establish relevance, not buying intent. Candidate relationships and CRM ownership must be checked before outreach. Published campaign results are attributed to Out2Win and are not independently audited. ICP, buyer roles, scores and recommendations are editorial hypotheses. Private pipeline, revenue, budgets, contact details and probabilities remain unknown. This is a dated research snapshot, not a live company-research feature.
+
+### Nike, Decagon and Anduril researched cases
+
+`lib/company-demos.ts` holds the source registers and tailored editorial proposals, reviewed October 8, 2026. `components/CompanyResearchWorkspace.tsx` renders the nine workspace sections at `/nike`, `/decagon` and `/anduril`. Each case contains three real organizations and two editorial priorities; no simulated financials or invented numeric scores are used.
+
+Nike uses retail channel accounts, with consumers as the end customers. Decagon uses workflow-based research candidates whose existing vendor relationships are unknown. Anduril uses established public-program context, not asserted net-new opportunities. Source-reader limitations and publisher attribution appear in each source register. These are manual snapshots, not live external-research features. Hidden test projects remain in browser storage; the public project list filters their names without deleting saved data.
 
 ## Local development
 

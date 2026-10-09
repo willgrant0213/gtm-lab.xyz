@@ -656,3 +656,19 @@ button { color: inherit; }
 .field-help { color: var(--muted); font-size: 10px; font-weight: 400; line-height: 1.65; }
 .form-output-note { margin: -4px 0 0; color: var(--muted); font-size: 11px; line-height: 1.75; }
 @media (max-width: 600px) { .customize-fields { grid-template-columns: 1fr; } }
+
+/* A navy frame for the workspace, with readable navigation and soft borders. */
+.main-sidebar { color: #e2e9f2; background: var(--navy); border-color: #41546e; }
+.main-sidebar .sidebar-top, .main-sidebar .sidebar-method { border-color: #41546e; }
+.main-sidebar .app-logo strong, .main-sidebar .mobile-close { color: #fff; }
+.main-sidebar .project-switcher { background: #20364f; border-color: #41546e; }
+.main-sidebar .project-switcher strong { color: #fff; }
+.main-sidebar .project-switcher small, .main-sidebar .project-switcher > span { color: #c6d3e5; }
+.main-sidebar .new-project-button { color: #d8e5f5; border-color: #41546e; }
+.main-sidebar .new-project-button:hover { color: #fff; background: #20364f; border-color: #8197b3; }
+.main-sidebar nav button { color: #c6d3e5; }
+.main-sidebar nav button:hover { color: #fff; background: #20364f; }
+.main-sidebar nav button.active { color: #fff; background: #294563; box-shadow: inset 2px 0 #8bb3ff; }
+.main-sidebar .sidebar-method small, .main-sidebar .sidebar-method p { color: #b6c5d9; }
+.main-sidebar .sidebar-method button { color: #d8e5f5; }
+.main-sidebar :where(a, button):focus-visible { outline-color: #abc5f7; }

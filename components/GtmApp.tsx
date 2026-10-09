@@ -96,7 +96,7 @@ function Landing({ input, setInput, onDemo, onGenerate, onProjects, generationEr
       <header className="site-header">
         <a className="brand" href="#top" aria-label="GTM Lab home"><span className="brand-mark">G</span><span>GTM Lab</span></a>
         <nav aria-label="Primary navigation">
-            <a href="#methodology">About</a><a href="#demo">Demo Workspace</a>
+            <a href="#demo">Demo Workspace</a><a href="#methodology">About</a>
           <button className="text-button" onClick={onProjects}>My Projects</button>
           <span className="status-chip"><span />Interactive Prototype</span>
         </nav>

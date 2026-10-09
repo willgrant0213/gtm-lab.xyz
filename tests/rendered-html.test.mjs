@@ -40,7 +40,7 @@ test("server-renders the recruiter-facing GTM Lab experience", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
   const html = await response.text();
   assert.match(html, /<title>GTM Lab/);
-  assert.match(html, /Turn a market thesis into a revenue plan/);
+  assert.match(html, /Find your best-fit customers\. Plan how to reach them/);
   assert.match(html, /Build your GTM strategy/);
   assert.match(html, /Try example inputs/);
   assert.match(html, /Creates an illustrative plan/);
@@ -88,7 +88,7 @@ test("server-renders the direct Out2Win interview link without fabricated operat
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /Out2Win — Researched GTM Plan/);
-  assert.match(html, /A focused plan for the next brand brief/);
+  assert.match(html, /Find brands with a clear athlete-campaign need/);
   assert.match(html, /Public evidence \+ proposed strategy/);
   assert.match(html, /Actual pipeline \/ revenue/);
   assert.match(html, /Unknown/);
@@ -198,7 +198,7 @@ test("real company demos render sourced context without simulated operating resu
     assert.match(html, /Public evidence \+ proposed strategy/);
     assert.match(html, /Private pipeline \/ revenue/);
     assert.match(html, /Unknown/);
-    assert.match(html, /Editorial focus/);
+    assert.match(html, /Suggested priority/);
     assert.doesNotMatch(html, /Sentinel AI|ForecastFlow|Estimated TAM|Weighted pipeline|Est. value/);
   }
 });

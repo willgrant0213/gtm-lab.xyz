@@ -39,6 +39,8 @@ h1 { max-width: 640px; margin: 0; font-size: clamp(48px,5.2vw,76px); line-height
 .workflow { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; color: #393d45; font-family: var(--font-geist-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
 .workflow span { padding: 7px 9px; border: 1px solid #d5d8dd; background: rgba(255,255,255,.55); }
 .workflow i { color: #9599a0; font-style: normal; }
+.workflow-group { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+.hero .workflow { gap: 12px 8px; font-size: 12px; }
 .strategy-panel { background: var(--white); border: 1px solid #d8dadf; box-shadow: 0 25px 60px rgba(27,34,48,.08); }
 .panel-heading { padding: 25px 28px 21px; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #e6e7ea; }
 .panel-heading .step-label { margin-bottom: 7px; }

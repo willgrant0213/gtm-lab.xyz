@@ -8,9 +8,9 @@
   --paper: #ffffff;
   --white: #ffffff;
   --navy: #14263e;
-  --accent: #2563eb;
-  --accent-dark: #1d4ed8;
-  --accent-soft: #eff5ff;
+  --accent: #14263e;
+  --accent-dark: #20364f;
+  --accent-soft: #f3f4f6;
 }
 
 * { box-sizing: border-box; }
@@ -693,3 +693,23 @@ button { color: inherit; }
   .methodology-flow { grid-template-columns: 1fr; gap: 12px; }
   .methodology-flow > div, .methodology-flow > div:last-child { min-height: 90px; flex-direction: row; align-items: center; gap: 22px; padding: 20px; }
 }
+
+/* One navy accent, white marks on dark headers, and thin workspace frames. */
+.project-initial, .demo-icon { color: #fff; background: var(--navy); }
+.main-sidebar .app-logo > span, .projects-page > header .app-logo > span,
+.mini-brand > span { color: var(--navy); background: #fff; }
+.projects-page > header .primary-small { color: var(--navy); background: #fff; }
+.projects-page > header .primary-small:hover { background: #f3f4f6; }
+.main-sidebar nav button.active { background: #27374a; box-shadow: inset 2px 0 #fff; }
+.main-sidebar :where(a, button):focus-visible, .site-header :where(a, button):focus-visible { outline-color: #fff; }
+.app-shell .workspace-card, .app-shell .metric-grid, .app-shell .priority-account,
+.app-shell .formula-card, .app-shell .persona-layout, .app-shell .recruiter-tour,
+.app-shell .pipeline-column, .app-shell .next-experiment,
+.app-shell .filter-bar select, .app-shell .search-field,
+.app-shell .topbar-actions button, .app-shell .priority-actions button,
+.project-history-card, .research-brief, .company-source-modal { border-color: var(--navy); }
+.overview-lead > .workspace-card:last-child { border-color: var(--navy); }
+.score.high { color: var(--navy); border-color: var(--navy); background: #f3f4f6; }
+.project-switcher > i { color: var(--navy); background: #fff; }
+.trust-badge.research, .trust-badge.demo, .topbar-actions .source-button { color: var(--navy); background: #f3f4f6; }
+.simulated-source { background: #747b85; }
